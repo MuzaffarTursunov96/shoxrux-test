@@ -6,7 +6,10 @@ import openpyxl
 import os
 import random
 
-def index(request,pk):
+def index(request):
+  return render(request,'base.html')
+
+def test(request,pk):
   page = pk
   if not page:
     page=1
