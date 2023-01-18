@@ -13,7 +13,8 @@ def test(request,pk):
   page = pk
   if not page:
     page=1
-  questions = Quetion.objects.all()[:50]
+  items = list(Quetion.objects.all())
+  questions = random.sample(items, 50)
   # paginator = Paginator(questions,5)
   # questions = paginator.page(page)
 
