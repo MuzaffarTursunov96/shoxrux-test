@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <title>Test</title>
+</head>
+<style>
+  body{
+    background-color:#eee;
+}
+
+label.radio {
+  cursor: pointer;
+}
+
+label.radio input {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+label.radio span {
+  padding: 4px 0px;
+  border: 1px solid red;
+  display: inline-block;
+  color: red;
+  width: 100%;
+  text-align: center;
+  border-radius: 3px;
+  margin-top: 7px;
+  text-transform: uppercase;
+}
+
+label.radio input:checked + span {
+  border-color: red;
+  background-color: orange;
+  color: #fff;
+}
+
+.ans {
+  margin-left: 36px !important;
+}
+
+.btn:focus {
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.btn:active {
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+</style>
+<body>
+  
+  <div class="container mt-5">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-10 col-lg-10">
+            <div class="border">
+                <div class="question bg-white p-3 border-bottom">
+                    <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                        <h4>Test</h4><span>(5 of {{question_count}})</span></div>
+                </div>
+                {%for question in questions %}
+                <div class="question bg-white p-3 border-bottom">
+                    <div class="d-flex flex-row align-items-center question-title">
+                        <h3 class="text-danger">Q-{{ forloop.counter }}</h3>
+                        <h5 class="mt-1 ml-2">{{question.title}}?</h5>
+                    </div>
+                    <div class="ans ml-2">
+                    <label class="radio"> <input type="radio" name="{{question.id}}" data-test='a' onclick="checked_an('a')" value="a">A) <span> {{question.a}}</span>
+                    </label>    
+                    </div><div class="ans ml-2">
+                    <label class="radio"> <input type="radio" name="{{question.id}}" data-test='b' onclick="checked_an('b')" value="b">B) <span> {{question.b}}</span>
+                    </label>    
+                    </div><div class="ans ml-2">
+                    <label class="radio"> <input type="radio" name="{{question.id}}" data-test='c' onclick="checked_an('c')" value="c">C) <span> {{question.c}}</span>
+                    </label>    
+                    </div><div class="ans ml-2">
+                    <label class="radio"> <input type="radio" name="{{question.id}}" data-test='d' onclick="checked_an('d')" value="d">D) <span> {{question.d}}</span>
+                    </label>    
+                    </div></div>
+                    <div class="d-flex flex-row align-items-center question-title"><div class="answer{{question.id}}"></div></div>
+                <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white"><button class="btn btn-primary d-flex align-items-center btn-success" type="button" onclick="answer('{{question.id}}')">&nbsp;Submit</button></div>
+                {% endfor %}
+            </div>
+        </div>
+       </div>
+    </div>
+
+    <div class="container mt-5 mb-5">
+      <!-- <a href="/question/xls">XML</a>
+      <a href="/question/rand">Rand</a> -->
+      <div class="d-flex justify-content-center row ">
+        <div class="ball_id"></div>
+      </div>
+      <div class="d-flex justify-content-center row">
+        <button class="btn btn-primary" onclick="ball_collect()">Tugatish</button>
+      </div>
+    </div>  
+</body>
+<script>
+  var ball = 0;
+  function answer(id){
+      var url ='answer/'+(id);
+      var answer =document.querySelector(".selected").getAttribute('data-test');
+      // console.log(answer)
+    if (answer != null){
+
+      $.ajax({
+      url: url,        
+      method: 'get',
+      dataType: "json",
+      data:{
+          "id":id,
+          'answer':answer
+      } ,  
+    success: function(data){  
+      data =data;
+      if (data.msg ==true){
+        ball+=1;
+        var answer =document.querySelector('.answer'+id)
+        console.log(answer)
+        const para = document.createElement("p");
+        para.innerHTML = "Javob tog'ri  " + data.answer;
+        answer.appendChild(para);
+        
+      }else{
+        var answer =document.querySelector('.answer'+id)
+        console.log(answer)
+        const para = document.createElement("p");
+        para.innerHTML = "Notog'ri javob, to'g'ri javob bu " + data.answer;
+        answer.appendChild(para);
+
+      }
+      console.log(data);
+    },
+      error: function(data){
+          console.log(data.error);
+          // alert(data);
+      }
+      
+    });
+
+    }else{
+      alert('You must chooos the answer!!!')
+    }
+
+
+  }
+
+
+  function checked_an(el){
+    var test =document.querySelectorAll('[data-test]');
+    test.forEach(function(elem){
+      elem.removeAttribute("class");
+    });
+    var t=$('[data-test="'+el+'"]')
+    $(t).attr('class','selected');
+  }
+
+  function ball_collect(){
+    ballbtn =document.querySelector('.ball_id')
+    console.log(ballbtn)
+    const para = document.createElement("h1");
+    para.innerHTML = "To'plangan ball 50 dan " + ball;
+    ballbtn.appendChild(para);
+    
+  }
+</script>
+</html>
