@@ -17,7 +17,7 @@ def test(request,pk):
   questions = random.sample(items, 50)
   # paginator = Paginator(questions,5)
   # questions = paginator.page(page)
-
+  # questions=Quetion.objects.all()
   context ={
     'questions':questions,
     'question_count':50
@@ -41,27 +41,31 @@ def answer(request,pk):
 
 def xsl(request):
   absolute_path = os.path.abspath(__file__)
-  dataframe = openpyxl.load_workbook(f"G:\\rabochiy stol\\shoxruh\\main\\mobil.xlsx")
+  dataframe = openpyxl.load_workbook(f"G:\\rabochiy stol\\shoxruh\\main\\savol.xlsx")
   dataframe1 = dataframe.active
-  
-  # Iterate the loop to read the cell values
+  q=Quetion.objects.all()
+  q.delete()
   for row in range(0, dataframe1.max_row):
       project =[]
       question=Quetion()
       for col in dataframe1.iter_cols(1, dataframe1.max_column):
         project.append(col[row].value)
-        # print(col[row].value)
-      # print('#'*20)
-      # print(project)
-      question.title =project[0]
-      question.a =project[3]
-      question.b =project[5]
-      question.c =project[7]
-      question.d =project[9]
+        print(col[row].value)
+      print(project)
+      
+      print('#'*20)
+      print(project)
+      if project[5] ==None or project[1]==None or project[2]==None or project[3]==None or project[6]==None:
+        continue
+      question.title =project[1]
+      question.a =project[2]
+      question.b =project[3]
+      question.c =project[5]
+      question.d =project[6]
       question.answer ='a'
       question.save()
 
-      print(len(project))
+  #     print(len(project))
   return redirect('index')
 
 def do_rand(request):

@@ -11,7 +11,7 @@ class Quetion(models.Model):
     ('c','c'),
     ('d','d'),
   )
-  title =models.CharField(max_length=255)
+  title =models.TextField(default='')
   a =models.CharField(max_length=255)
   b=models.CharField(max_length=255)
   c=models.CharField(max_length=255)
